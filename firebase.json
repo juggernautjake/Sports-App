@@ -1,0 +1,96 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "sports-app-4e722",
+          "appId": "1:789631569922:android:8433a05c5f270ac1f2d71b",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sports-app-4e722",
+          "configurations": {
+            "android": "1:789631569922:android:8433a05c5f270ac1f2d71b",
+            "ios": "1:789631569922:ios:4e1db923e75692e4f2d71b",
+            "macos": "1:789631569922:ios:4e1db923e75692e4f2d71b",
+            "web": "1:789631569922:web:6f5dad7e1d9ffee5f2d71b",
+            "windows": "1:789631569922:web:68b44e1ea882342ef2d71b"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "host": "localhost",
+      "port": 8081,
+      "rules": "firestore.rules",
+      "indexes": "firestore.indexes.json"
+    },
+    "database": {
+      "port": 9000,
+      "rules": "database.rules.json"
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "pubsub": {
+      "port": 8085
+    },
+    "storage": {
+      "port": 9199,
+      "rules": "storage.rules"
+    },
+    "ui": {
+      "enabled": true
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ],
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}
