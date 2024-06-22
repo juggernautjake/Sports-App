@@ -42,17 +42,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
-    appId: '1:789631569922:web:6f5dad7e1d9ffee5f2d71b',
-    messagingSenderId: '789631569922',
-    projectId: 'sports-app-4e722',
     authDomain: 'sports-app-4e722.firebaseapp.com',
     databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+    projectId: 'sports-app-4e722',
     storageBucket: 'sports-app-4e722.appspot.com',
+    messagingSenderId: '789631569922',
+    appId: '1:789631569922:web:6f5dad7e1d9ffee5f2d71b',
     measurementId: 'G-2DTJS5487J',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBVm_Va9qsxDzwnCZ_odKMqKT1gaVsu-YA',
+    apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
     appId: '1:789631569922:android:8433a05c5f270ac1f2d71b',
     messagingSenderId: '789631569922',
     projectId: 'sports-app-4e722',
@@ -61,7 +61,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAhyfvjY4zp1uplF9glgCHiOWI6errPW_U',
+    apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
     appId: '1:789631569922:ios:4e1db923e75692e4f2d71b',
     messagingSenderId: '789631569922',
     projectId: 'sports-app-4e722',
@@ -71,7 +71,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAhyfvjY4zp1uplF9glgCHiOWI6errPW_U',
+    apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
     appId: '1:789631569922:ios:4e1db923e75692e4f2d71b',
     messagingSenderId: '789631569922',
     projectId: 'sports-app-4e722',
@@ -82,13 +82,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
-    appId: '1:789631569922:web:68b44e1ea882342ef2d71b',
+    appId: '1:789631569922:web:6f5dad7e1d9ffee5f2d71b',
     messagingSenderId: '789631569922',
     projectId: 'sports-app-4e722',
     authDomain: 'sports-app-4e722.firebaseapp.com',
     databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
     storageBucket: 'sports-app-4e722.appspot.com',
-    measurementId: 'G-XMKZ73DY4W',
+    measurementId: 'G-2DTJS5487J',
   );
-
 }

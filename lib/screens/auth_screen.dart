@@ -1,5 +1,7 @@
+// screens/auth_screen.dart
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../components/auth_form.dart';
+import '../components/error_message.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -7,57 +9,35 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final _auth = FirebaseAuth.instance;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Login', style: Theme.of(context).textTheme.titleLarge),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _auth.signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
-                } catch (e) {
-                  print(e);
-                }
-              },
-              child: Text('Login'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _auth.createUserWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
-                } catch (e) {
-                  print(e);
-                }
-              },
-              child: Text('Sign Up'),
-            ),
-          ],
+      body: Center(
+        child: Container(
+          width: 400,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_errorMessage != null) ErrorMessage(message: _errorMessage!),
+              AuthForm(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                onError: (message) {
+                  setState(() {
+                    _errorMessage = message;
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

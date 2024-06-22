@@ -1,0 +1,3513 @@
+- Current Code
+    - components
+        - auth_form.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import '../components/hover_button.dart';
+            
+            class AuthForm extends StatefulWidget {
+              final TextEditingController emailController;
+              final TextEditingController passwordController;
+              final Function(String) onError;
+            
+              const AuthForm({
+                required this.emailController,
+                required this.passwordController,
+                required this.onError,
+              });
+            
+              @override
+              _AuthFormState createState() => _AuthFormState();
+            }
+            
+            class _AuthFormState extends State<AuthForm> {
+              final _formKey = GlobalKey<FormState>();
+            
+              void _trySubmit() {
+                if (_formKey.currentState?.validate() ?? false) {
+                  // Handle the form submission
+                } else {
+                  widget.onError('Invalid form');
+                }
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: widget.emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(color: Colors.blue),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty || !value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 12),
+                      TextFormField(
+                        controller: widget.passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.blue),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty || value.length < 6) {
+                            return 'Password must be at least 6 characters long';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: HoverButton(
+                              onPressed: _trySubmit,
+                              child: Text('Register', textAlign: TextAlign.center),
+                            ),
+                          ),
+                          SizedBox(width: 10), // Space between buttons
+                          Expanded(
+                            child: HoverButton(
+                              onPressed: _trySubmit,
+                              child: Text('Login', textAlign: TextAlign.center),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - confirmation_dialog.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class ConfirmationDialog extends StatelessWidget {
+              final String title;
+              final String content;
+              final VoidCallback onAccept;
+              final VoidCallback onEdit;
+            
+              const ConfirmationDialog({
+                required this.title,
+                required this.content,
+                required this.onAccept,
+                required this.onEdit,
+              });
+            
+              @override
+              Widget build(BuildContext context) {
+                return AlertDialog(
+                  title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text(content),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Edit'),
+                      onPressed: onEdit,
+                    ),
+                    TextButton(
+                      child: Text('Accept'),
+                      onPressed: onAccept,
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - dashboard_button.dart
+        - dashboard.dart
+        - datetime_error_dialog.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class DateTimeErrorDialog extends StatelessWidget {
+              final bool isStartDateTimeValid;
+              final bool isEndDateTimeValid;
+            
+              DateTimeErrorDialog({
+                required this.isStartDateTimeValid,
+                required this.isEndDateTimeValid,
+              });
+            
+              @override
+              Widget build(BuildContext context) {
+                return AlertDialog(
+                  title: Text('Date/Time Error', style: Theme.of(context).textTheme.titleMedium),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        if (!isStartDateTimeValid) Text('Start time cannot be in the past.', style: TextStyle(color: Colors.red)),
+                        if (!isEndDateTimeValid) Text('End time cannot be before start time.', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Edit'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - error_message.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class ErrorMessage extends StatelessWidget {
+              final String message;
+            
+              ErrorMessage({required this.message});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Column(
+                  children: [
+                    Text(
+                      message,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - event_date_picker.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+            
+            class EventDatePicker extends StatelessWidget {
+              final DateTime eventDate;
+              final ValueChanged<DateTime> onDateChanged;
+            
+              EventDatePicker({required this.eventDate, required this.onDateChanged});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Column(
+                  children: [
+                    Text('Event Date', style: Theme.of(context).textTheme.titleMedium),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: 600.0,
+                        child: CalendarCarousel(
+                          onDayPressed: (DateTime date, List<dynamic> events) {
+                            onDateChanged(date);
+                          },
+                          weekendTextStyle: TextStyle(
+                            color: Colors.black,
+                          ),
+                          weekdayTextStyle: TextStyle(
+                            color: Colors.black,
+                          ),
+                          selectedDayTextStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          thisMonthDayBorderColor: Colors.grey,
+                          selectedDateTime: eventDate,
+                          daysHaveCircularBorder: false,
+                          selectedDayButtonColor: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - event_description_field.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class EventDescriptionField extends StatelessWidget {
+              final TextEditingController controller;
+              final bool submitted;
+            
+              EventDescriptionField({required this.controller, required this.submitted});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          labelText: 'Event Description',
+                          border: OutlineInputBorder(),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorStyle: TextStyle(height: 0),
+                          suffixIcon: submitted && controller.text.isEmpty ? Icon(Icons.error, color: Colors.red) : null,
+                        ),
+                        maxLines: 7,
+                        onChanged: (value) {
+                          // Trigger any needed state changes
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_location_fields.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:flutter_typeahead/flutter_typeahead.dart';
+            
+            class EventLocationFields extends StatelessWidget {
+              final TextEditingController streetAddressController;
+              final TextEditingController cityController;
+              final TextEditingController stateController;
+              final TextEditingController zipCodeController;
+              final bool submitted;
+            
+              EventLocationFields({
+                required this.streetAddressController,
+                required this.cityController,
+                required this.stateController,
+                required this.zipCodeController,
+                required this.submitted,
+              });
+            
+              final List<String> _states = const [
+                'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
+                'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
+                'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+                'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
+                'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+              ];
+            
+              @override
+              Widget build(BuildContext context) {
+                return Column(
+                  children: [
+                    _buildTextField(context, streetAddressController, 'Street Address'),
+                    _buildTextField(context, cityController, 'City'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: TypeAheadFormField<String>(
+                            textFieldConfiguration: TextFieldConfiguration(
+                              controller: stateController,
+                              decoration: InputDecoration(
+                                labelText: 'State',
+                                border: OutlineInputBorder(),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red, width: 2),
+                                ),
+                                errorStyle: TextStyle(height: 0),
+                                suffixIcon: submitted && stateController.text.isEmpty ? Icon(Icons.error, color: Colors.red) : null,
+                              ),
+                            ),
+                            suggestionsCallback: (pattern) async {
+                              return _states.where((state) => state.toLowerCase().contains(pattern.toLowerCase())).toList();
+                            },
+                            itemBuilder: (context, suggestion) {
+                              return ListTile(
+                                title: Text(suggestion),
+                              );
+                            },
+                            onSuggestionSelected: (suggestion) {
+                              stateController.text = suggestion;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return '';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    _buildTextField(context, zipCodeController, 'Zip Code', keyboardType: TextInputType.number),
+                  ],
+                );
+              }
+            
+              Widget _buildTextField(BuildContext context, TextEditingController controller, String label, {TextInputType keyboardType = TextInputType.text, int maxLines = 1}) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          labelText: label,
+                          border: OutlineInputBorder(),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorStyle: TextStyle(height: 0),
+                          suffixIcon: submitted && controller.text.isEmpty ? Icon(Icons.error, color: Colors.red) : null,
+                        ),
+                        keyboardType: keyboardType,
+                        maxLines: maxLines,
+                        onChanged: (value) {
+                          // Trigger any needed state changes
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '';
+                          }
+                          if (label == 'Street Address' && !RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+                            return '';
+                          }
+                          if (label == 'City' && !RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                            return '';
+                          }
+                          if (label == 'Zip Code' && !RegExp(r'^\d{5}$').hasMatch(value)) {
+                            return '';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_name_field.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class EventNameField extends StatelessWidget {
+              final TextEditingController controller;
+              final bool submitted;
+            
+              EventNameField({required this.controller, required this.submitted});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          labelText: 'Event Name',
+                          border: OutlineInputBorder(),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorStyle: TextStyle(height: 0),
+                          suffixIcon: submitted && controller.text.isEmpty ? Icon(Icons.error, color: Colors.red) : null,
+                        ),
+                        onChanged: (value) {
+                          // Trigger any needed state changes
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_repetition_type_dropdown.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class EventRepetitionTypeDropdown extends StatelessWidget {
+              final String repetitionType;
+              final ValueChanged<String?> onRepetitionTypeChanged;
+              final bool submitted;
+            
+              const EventRepetitionTypeDropdown({
+                required this.repetitionType,
+                required this.onRepetitionTypeChanged,
+                required this.submitted,
+              });
+            
+              @override
+              Widget build(BuildContext context) {
+                return Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: DropdownButtonFormField<String>(
+                      value: repetitionType,
+                      decoration: InputDecoration(
+                        labelText: 'Repetition Type',
+                        border: OutlineInputBorder(),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 2),
+                        ),
+                        errorStyle: TextStyle(height: 0),
+                        suffixIcon: submitted && repetitionType.isEmpty ? Icon(Icons.error, color: Colors.red) : null,
+                      ),
+                      items: ['none', 'daily', 'weekly', 'monthly']
+                          .map((type) => DropdownMenuItem<String>(
+                                value: type,
+                                child: Text(type[0].toUpperCase() + type.substring(1)),
+                              ))
+                          .toList(),
+                      onChanged: onRepetitionTypeChanged,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_tile.dart
+        - event_time_picker.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class EventTimePicker extends StatelessWidget {
+              final String label;
+              final int hour;
+              final int minute;
+              final String period;
+              final ValueChanged<int> onHourChanged;
+              final ValueChanged<int> onMinuteChanged;
+              final ValueChanged<String> onPeriodChanged;
+            
+              const EventTimePicker({
+                required this.label,
+                required this.hour,
+                required this.minute,
+                required this.period,
+                required this.onHourChanged,
+                required this.onMinuteChanged,
+                required this.onPeriodChanged,
+              });
+            
+              @override
+              Widget build(BuildContext context) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(label, style: Theme.of(context).textTheme.titleMedium),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_drop_up, size: 24, color: Colors.black),
+                              onPressed: () => onHourChanged(hour == 12 ? 1 : hour + 1),
+                            ),
+                            SizedBox(
+                              width: 60,
+                              child: TextField(
+                                controller: TextEditingController(text: hour.toString().padLeft(2, '0')),
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  int newHour = int.tryParse(value) ?? hour;
+                                  if (newHour > 0 && newHour <= 12) onHourChanged(newHour);
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_drop_down, size: 24, color: Colors.black),
+                              onPressed: () => onHourChanged(hour == 1 ? 12 : hour - 1),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 4),
+                        Text(':', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        SizedBox(width: 4),
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_drop_up, size: 24, color: Colors.black),
+                              onPressed: () => onMinuteChanged(minute == 59 ? 0 : minute + 1),
+                            ),
+                            SizedBox(
+                              width: 60,
+                              child: TextField(
+                                controller: TextEditingController(text: minute.toString().padLeft(2, '0')),
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  int newMinute = int.tryParse(value) ?? minute;
+                                  if (newMinute >= 0 && newMinute < 60) onMinuteChanged(newMinute);
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_drop_down, size: 24, color: Colors.black),
+                              onPressed: () => onMinuteChanged(minute == 0 ? 59 : minute - 1),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 8),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => onPeriodChanged('AM'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
+                                    ),
+                                    backgroundColor: period == 'AM' ? Colors.blue : Colors.grey,
+                                    minimumSize: Size(32, 36),
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                  ),
+                                  child: Text('AM', style: TextStyle(fontSize: 12)),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => onPeriodChanged('PM'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.horizontal(right: Radius.circular(8)),
+                                    ),
+                                    backgroundColor: period == 'PM' ? Colors.blue : Colors.grey,
+                                    minimumSize: Size(32, 36),
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                  ),
+                                  child: Text('PM', style: TextStyle(fontSize: 12)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - events_filter.dart
+        - events_list.dart
+        - friend_request_card.dart
+        - friend_requests_notification.dart
+        - friend_list.dart
+        - hover_button.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class HoverButton extends StatefulWidget {
+              final VoidCallback onPressed;
+              final Widget child;
+            
+              const HoverButton({
+                required this.onPressed,
+                required this.child,
+              });
+            
+              @override
+              _HoverButtonState createState() => _HoverButtonState();
+            }
+            
+            class _HoverButtonState extends State<HoverButton> {
+              bool _hovering = false;
+              bool _pressed = false;
+            
+              @override
+              Widget build(BuildContext context) {
+                return MouseRegion(
+                  onEnter: (event) => setState(() => _hovering = true),
+                  onExit: (event) => setState(() => _hovering = false),
+                  child: GestureDetector(
+                    onTapDown: (details) => setState(() => _pressed = true),
+                    onTapUp: (details) => setState(() => _pressed = false),
+                    onTap: widget.onPressed,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                      decoration: BoxDecoration(
+                        color: _pressed
+                            ? Colors.lightBlueAccent
+                            : (_hovering ? Colors.blueAccent : Colors.blue),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: AnimatedDefaultTextStyle(
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: _hovering ? 18 : 16,
+                        ),
+                        duration: Duration(milliseconds: 200),
+                        child: widget.child,
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - invite_friends_list.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            
+            class InviteFriendsList extends StatelessWidget {
+              final List<String> invitedFriends;
+              final ValueChanged<List<String>> onInvitedFriendsChanged;
+            
+              InviteFriendsList({required this.invitedFriends, required this.onInvitedFriendsChanged});
+            
+              @override
+              Widget build(BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                return StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friends').snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) return CircularProgressIndicator();
+                    var friends = snapshot.data!.docs;
+                    return Column(
+                      children: [
+                        Text('Invite Friends', style: Theme.of(context).textTheme.titleMedium),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: friends.length,
+                          itemBuilder: (context, index) {
+                            var friend = friends[index];
+                            var friendData = friend.data() as Map<String, dynamic>;
+                            bool isSelected = invitedFriends.contains(friendData['email']);
+                            return ListTile(
+                              title: Text(friendData['name']),
+                              trailing: Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  List<String> newInvitedFriends = List.from(invitedFriends);
+                                  if (value == true) {
+                                    newInvitedFriends.add(friendData['email']);
+                                  } else {
+                                    newInvitedFriends.remove(friendData['email']);
+                                  }
+                                  onInvitedFriendsChanged(newInvitedFriends);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            }
+            
+            ```
+            
+        - private_event_toggle.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class PrivateEventToggle extends StatelessWidget {
+              final bool isPrivate;
+              final ValueChanged<bool> onToggle;
+            
+              PrivateEventToggle({required this.isPrivate, required this.onToggle});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Private Event'),
+                    Switch(
+                      value: isPrivate,
+                      onChanged: onToggle,
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - search_users_field.dart
+        - suggested_users_list.dart
+        - team_sign_up.dart
+        - validation_error_dialog.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class ValidationErrorDialog extends StatelessWidget {
+              final String name;
+              final String description;
+              final String streetAddress;
+              final String city;
+              final String state;
+              final String zipCode;
+            
+              ValidationErrorDialog({
+                required this.name,
+                required this.description,
+                required this.streetAddress,
+                required this.city,
+                required this.state,
+                required this.zipCode,
+              });
+            
+              @override
+              Widget build(BuildContext context) {
+                return AlertDialog(
+                  title: Text('Validation Error', style: Theme.of(context).textTheme.titleMedium),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text('Please fill out the following fields:', style: TextStyle(color: Colors.red)),
+                        if (name.isEmpty) Text('- Event Name', style: TextStyle(color: Colors.red)),
+                        if (description.isEmpty) Text('- Event Description', style: TextStyle(color: Colors.red)),
+                        if (streetAddress.isEmpty) Text('- Street Address', style: TextStyle(color: Colors.red)),
+                        if (city.isEmpty) Text('- City', style: TextStyle(color: Colors.red)),
+                        if (state.isEmpty) Text('- State', style: TextStyle(color: Colors.red)),
+                        if (zipCode.isEmpty) Text('- Zip Code', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Edit'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+    - models
+        - event.dart
+            
+            ```dart
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            
+            class Event {
+              final String id;
+              final String title;
+              final String description;
+              final String location;
+              final DateTime startTime;
+              final DateTime endTime;
+              final String createdBy;
+              final bool isPrivate;
+              final List<String> invitedFriends;
+              final List<String> favorites;
+              final List<String> rsvps;
+              final String repetitionType;
+              final DateTime? nextOccurrence;
+            
+              Event({
+                required this.id,
+                required this.title,
+                required this.description,
+                required this.location,
+                required this.startTime,
+                required this.endTime,
+                required this.createdBy,
+                required this.isPrivate,
+                required this.invitedFriends,
+                required this.favorites,
+                required this.rsvps,
+                required this.repetitionType,
+                this.nextOccurrence,
+              });
+            
+              factory Event.fromMap(Map<String, dynamic> map, String id) {
+                return Event(
+                  id: id,
+                  title: map['name'] ?? '',
+                  description: map['description'] ?? '',
+                  location: map['location'] ?? '',
+                  startTime: (map['startTime'] as Timestamp).toDate(),
+                  endTime: (map['endTime'] as Timestamp).toDate(),
+                  createdBy: map['createdBy'] ?? '',
+                  isPrivate: map['isPrivate'] ?? false,
+                  invitedFriends: List<String>.from(map['invitedFriends'] ?? []),
+                  favorites: List<String>.from(map['favorites'] ?? []),
+                  rsvps: List<String>.from(map['rsvps'] ?? []),
+                  repetitionType: map['repetitionType'] ?? 'none',
+                  nextOccurrence: map['nextOccurrence'] != null ? (map['nextOccurrence'] as Timestamp).toDate() : null,
+                );
+              }
+            
+              Map<String, dynamic> toMap() {
+                return {
+                  'name': title,
+                  'description': description,
+                  'location': location,
+                  'startTime': Timestamp.fromDate(startTime),
+                  'endTime': Timestamp.fromDate(endTime),
+                  'createdBy': createdBy,
+                  'isPrivate': isPrivate,
+                  'invitedFriends': invitedFriends,
+                  'favorites': favorites,
+                  'rsvps': rsvps,
+                  'repetitionType': repetitionType,
+                  'nextOccurrence': nextOccurrence != null ? Timestamp.fromDate(nextOccurrence!) : null,
+                };
+              }
+            }
+            
+            ```
+            
+    - screens
+        - auth_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import '../components/auth_form.dart';
+            import '../components/error_message.dart';
+            
+            class AuthScreen extends StatefulWidget {
+              @override
+              _AuthScreenState createState() => _AuthScreenState();
+            }
+            
+            class _AuthScreenState extends State<AuthScreen> {
+              final _emailController = TextEditingController();
+              final _passwordController = TextEditingController();
+              String? _errorMessage;
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Login', style: Theme.of(context).textTheme.titleLarge),
+                  ),
+                  body: Center(
+                    child: Container(
+                      width: 400,
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_errorMessage != null) ErrorMessage(message: _errorMessage!),
+                          AuthForm(
+                            emailController: _emailController,
+                            passwordController: _passwordController,
+                            onError: (message) {
+                              setState(() {
+                                _errorMessage = message;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - check_in_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            
+            class CheckInScreen extends StatelessWidget {
+              final String eventId;
+              final User? user = FirebaseAuth.instance.currentUser;
+            
+              CheckInScreen({required this.eventId});
+            
+              Future<void> _checkIn() async {
+                try {
+                  await FirebaseFirestore.instance.collection('events').doc(eventId).update({
+                    'checkedInUsers': FieldValue.arrayUnion([user!.email]),
+                  });
+                } catch (e) {
+                  print(e);
+                }
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Check-in', style: Theme.of(context).textTheme.titleLarge),
+                  ),
+                  body: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: _checkIn,
+                        child: Text('Check-in'),
+                      ),
+                      Expanded(
+                        child: StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection('events').doc(eventId).snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) return CircularProgressIndicator();
+                            var event = snapshot.data!;
+                            var checkedInUsers = event['checkedInUsers'] ?? [];
+                            return ListView.builder(
+                              itemCount: checkedInUsers.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(checkedInUsers[index]),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_details_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            
+            class EventDetailsScreen extends StatelessWidget {
+              final String eventId;
+            
+              EventDetailsScreen({required this.eventId});
+            
+              Future<void> _rsvpToEvent(BuildContext context) async {
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+            
+                  await FirebaseFirestore.instance.runTransaction((transaction) async {
+                    DocumentSnapshot eventSnapshot = await transaction.get(eventRef);
+            
+                    if (!eventSnapshot.exists) {
+                      throw Exception("Event does not exist!");
+                    }
+            
+                    List<String> rsvps = List<String>.from(eventSnapshot['rsvps'] ?? []);
+                    if (!rsvps.contains(user.email)) {
+                      rsvps.add(user.email!);
+                    }
+            
+                    transaction.update(eventRef, {
+                      'rsvps': rsvps,
+                    });
+                  });
+            
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('RSVP Successful')));
+                }
+              }
+            
+              Future<void> _toggleFavorite(BuildContext context) async {
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+            
+                  await FirebaseFirestore.instance.runTransaction((transaction) async {
+                    DocumentSnapshot eventSnapshot = await transaction.get(eventRef);
+            
+                    if (!eventSnapshot.exists) {
+                      throw Exception("Event does not exist!");
+                    }
+            
+                    List<String> favorites = List<String>.from(eventSnapshot['favorites'] ?? []);
+                    if (favorites.contains(user.email)) {
+                      favorites.remove(user.email);
+                    } else {
+                      favorites.add(user.email!);
+                    }
+            
+                    transaction.update(eventRef, {
+                      'favorites': favorites,
+                    });
+                  });
+            
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Favorite Updated')));
+                }
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+            
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Event Details', style: Theme.of(context).textTheme.titleLarge),
+                  ),
+                  body: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance.collection('events').doc(eventId).snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      var eventData = snapshot.data!.data() as Map<String, dynamic>;
+                      bool isFavorite = eventData['favorites']?.contains(user?.email) ?? false;
+                      String createdBy = eventData['createdBy'] ?? 'Unknown';
+            
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(eventData['name'], style: Theme.of(context).textTheme.titleLarge),
+                            SizedBox(height: 16),
+                            Text('Created by: $createdBy', style: Theme.of(context).textTheme.bodyLarge),
+                            SizedBox(height: 16),
+                            Text('Description:', style: Theme.of(context).textTheme.titleMedium),
+                            Text(eventData['description']),
+                            SizedBox(height: 16),
+                            Text('Location:', style: Theme.of(context).textTheme.titleMedium),
+                            Text(eventData['location']),
+                            SizedBox(height: 16),
+                            Text('Start Time:', style: Theme.of(context).textTheme.titleMedium),
+                            Text(eventData['startTime'].toDate().toString()),
+                            SizedBox(height: 16),
+                            Text('End Time:', style: Theme.of(context).textTheme.titleMedium),
+                            Text(eventData['endTime'].toDate().toString()),
+                            SizedBox(height: 16),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () => _rsvpToEvent(context),
+                                child: Text('RSVP'),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            Center(
+                              child: IconButton(
+                                icon: Icon(isFavorite ? Icons.star : Icons.star_border, color: isFavorite ? Colors.yellow : null),
+                                onPressed: () => _toggleFavorite(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - event_form_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            import 'package:intl/intl.dart';
+            import '../components/confirmation_dialog.dart';
+            import '../components/datetime_error_dialog.dart';
+            import '../components/event_date_picker.dart';
+            import '../components/event_description_field.dart';
+            import '../components/event_location_fields.dart';
+            import '../components/event_name_field.dart';
+            import '../components/event_repetition_type_dropdown.dart';
+            import '../components/event_time_picker.dart';
+            import '../components/invite_friends_list.dart';
+            import '../components/private_event_toggle.dart';
+            import '../components/validation_error_dialog.dart';
+            
+            class EventFormScreen extends StatefulWidget {
+              final bool isEdit;
+              final String? eventId;
+              final Map<String, dynamic>? initialData;
+            
+              EventFormScreen({this.isEdit = false, this.eventId, this.initialData});
+            
+              @override
+              _EventFormScreenState createState() => _EventFormScreenState();
+            }
+            
+            class _EventFormScreenState extends State<EventFormScreen> {
+              final _formKey = GlobalKey<FormState>();
+              final _nameController = TextEditingController();
+              final _descriptionController = TextEditingController();
+              final _streetAddressController = TextEditingController();
+              final _cityController = TextEditingController();
+              final _stateController = TextEditingController();
+              final _zipCodeController = TextEditingController();
+              DateTime _eventDate = DateTime.now();
+              int _startHour = 12;
+              int _startMinute = 0;
+              String _startPeriod = 'AM';
+              int _endHour = 12;
+              int _endMinute = 0;
+              String _endPeriod = 'AM';
+              bool _isPrivate = false;
+              List<String> _invitedFriends = [];
+              String _repetitionType = 'none';
+            
+              bool _submitted = false;
+            
+              @override
+              void initState() {
+                super.initState();
+                if (widget.isEdit && widget.initialData != null) {
+                  _nameController.text = widget.initialData!['name'];
+                  _descriptionController.text = widget.initialData!['description'];
+                  _streetAddressController.text = widget.initialData!['location'].split(', ')[0];
+                  _cityController.text = widget.initialData!['location'].split(', ')[1];
+                  _stateController.text = widget.initialData!['location'].split(', ')[2];
+                  _zipCodeController.text = widget.initialData!['location'].split(', ')[3];
+                  _eventDate = (widget.initialData!['startTime'] as Timestamp).toDate();
+                  DateTime startDateTime = (widget.initialData!['startTime'] as Timestamp).toDate();
+                  _startHour = startDateTime.hour > 12 ? startDateTime.hour - 12 : startDateTime.hour;
+                  _startMinute = startDateTime.minute;
+                  _startPeriod = startDateTime.hour >= 12 ? 'PM' : 'AM';
+                  DateTime endDateTime = (widget.initialData!['endTime'] as Timestamp).toDate();
+                  _endHour = endDateTime.hour > 12 ? endDateTime.hour - 12 : endDateTime.hour;
+                  _endMinute = endDateTime.minute;
+                  _endPeriod = endDateTime.hour >= 12 ? 'PM' : 'AM';
+                  _isPrivate = widget.initialData!['isPrivate'] ?? false;
+                  _invitedFriends = List<String>.from(widget.initialData!['invitedFriends'] ?? []);
+                  _repetitionType = widget.initialData!['repetitionType'] ?? 'none';
+                }
+              }
+            
+              Future<void> _submitForm() async {
+                setState(() {
+                  _submitted = true;
+                });
+            
+                if (_formKey.currentState!.validate()) {
+                  _showConfirmationDialog();
+                } else {
+                  _showValidationErrorDialog();
+                }
+              }
+            
+              void _showConfirmationDialog() {
+                String address = '${_streetAddressController.text}, ${_cityController.text}, ${_stateController.text} ${_zipCodeController.text}';
+            
+                DateTime startDateTime = DateTime(
+                  _eventDate.year,
+                  _eventDate.month,
+                  _eventDate.day,
+                  _startPeriod == 'PM' && _startHour != 12 ? _startHour + 12 : _startHour,
+                  _startMinute,
+                );
+                DateTime endDateTime = DateTime(
+                  _eventDate.year,
+                  _eventDate.month,
+                  _eventDate.day,
+                  _endPeriod == 'PM' && _endHour != 12 ? _endHour + 12 : _endHour,
+                  _endMinute,
+                );
+            
+                bool hasMissingFields = _nameController.text.isEmpty ||
+                    _descriptionController.text.isEmpty ||
+                    _streetAddressController.text.isEmpty ||
+                    _cityController.text.isEmpty ||
+                    _stateController.text.isEmpty ||
+                    _zipCodeController.text.isEmpty;
+            
+                bool isStartDateTimeValid = startDateTime.isAfter(DateTime.now());
+                bool isEndDateTimeValid = endDateTime.isAfter(startDateTime);
+            
+                if (!isStartDateTimeValid || !isEndDateTimeValid) {
+                  _showDateTimeErrorDialog(isStartDateTimeValid, isEndDateTimeValid);
+                  return;
+                }
+            
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfirmationDialog(
+                      title: 'Confirm Event',
+                      content: 'Are you sure you want to submit this event?',
+                      onAccept: () async {
+                        try {
+                          final data = {
+                            'name': _nameController.text,
+                            'description': _descriptionController.text,
+                            'location': address,
+                            'startTime': Timestamp.fromDate(startDateTime),
+                            'endTime': Timestamp.fromDate(endDateTime),
+                            'createdBy': FirebaseAuth.instance.currentUser!.email,
+                            'isPrivate': _isPrivate,
+                            'invitedFriends': _invitedFriends,
+                            'favorites': [],
+                            'rsvps': [],
+                            'repetitionType': _repetitionType,
+                            'nextOccurrence': _calculateNextOccurrence(startDateTime),
+                          };
+            
+                          if (widget.isEdit) {
+                            await FirebaseFirestore.instance.collection('events').doc(widget.eventId).update(data);
+                          } else {
+                            await FirebaseFirestore.instance.collection('events').add(data);
+                          }
+            
+                          Navigator.of(context).pop(); // Close the dialog
+                          Navigator.of(context).pop(); // Navigate back to the main page
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      onEdit: () {
+                        Navigator.of(context).pop(); // Close the dialog to allow editing
+                      },
+                    );
+                  },
+                );
+              }
+            
+              DateTime _calculateNextOccurrence(DateTime startDateTime) {
+                switch (_repetitionType) {
+                  case 'daily':
+                    return startDateTime.add(Duration(days: 1));
+                  case 'weekly':
+                    return startDateTime.add(Duration(days: 7));
+                  case 'monthly':
+                    return DateTime(startDateTime.year, startDateTime.month + 1, startDateTime.day);
+                  default:
+                    return startDateTime;
+                }
+              }
+            
+              void _showValidationErrorDialog() {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ValidationErrorDialog(
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      streetAddress: _streetAddressController.text,
+                      city: _cityController.text,
+                      state: _stateController.text,
+                      zipCode: _zipCodeController.text,
+                    );
+                  },
+                );
+              }
+            
+              void _showDateTimeErrorDialog(bool isStartDateTimeValid, bool isEndDateTimeValid) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return DateTimeErrorDialog(
+                      isStartDateTimeValid: isStartDateTimeValid,
+                      isEndDateTimeValid: isEndDateTimeValid,
+                    );
+                  },
+                );
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text(widget.isEdit ? 'Edit Event' : 'Create Event', style: Theme.of(context).textTheme.titleLarge),
+                  ),
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            EventNameField(controller: _nameController, submitted: _submitted),
+                            EventDescriptionField(controller: _descriptionController, submitted: _submitted),
+                            EventLocationFields(
+                              streetAddressController: _streetAddressController,
+                              cityController: _cityController,
+                              stateController: _stateController,
+                              zipCodeController: _zipCodeController,
+                              submitted: _submitted,
+                            ),
+                            EventDatePicker(eventDate: _eventDate, onDateChanged: (date) => setState(() => _eventDate = date)),
+                            EventTimePicker(
+                              label: 'Start Time',
+                              hour: _startHour,
+                              minute: _startMinute,
+                              period: _startPeriod,
+                              onHourChanged: (hour) => setState(() => _startHour = hour),
+                              onMinuteChanged: (minute) => setState(() => _startMinute = minute),
+                              onPeriodChanged: (period) => setState(() => _startPeriod = period),
+                            ),
+                            EventTimePicker(
+                              label: 'End Time',
+                              hour: _endHour,
+                              minute: _endMinute,
+                              period: _endPeriod,
+                              onHourChanged: (hour) => setState(() => _endHour = hour),
+                              onMinuteChanged: (minute) => setState(() => _endMinute = minute),
+                              onPeriodChanged: (period) => setState(() => _endPeriod = period),
+                            ),
+                            EventRepetitionTypeDropdown(
+                              repetitionType: _repetitionType,
+                              onRepetitionTypeChanged: (type) => setState(() => _repetitionType = type!),
+                              submitted: _submitted,
+                            ),
+                            PrivateEventToggle(
+                              isPrivate: _isPrivate,
+                              onToggle: (value) => setState(() => _isPrivate = value),
+                            ),
+                            if (_isPrivate) InviteFriendsList(
+                              invitedFriends: _invitedFriends,
+                              onInvitedFriendsChanged: (friends) => setState(() => _invitedFriends = friends),
+                            ),
+                            SizedBox(height: 16),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: _submitForm,
+                                child: Text(widget.isEdit ? 'Edit Event' : 'Create Event'),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: Size(150, 40),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - events_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            import '../models/event.dart';
+            import 'event_details_screen.dart';
+            
+            class EventsScreen extends StatefulWidget {
+              @override
+              _EventsScreenState createState() => _EventsScreenState();
+            }
+            
+            class _EventsScreenState extends State<EventsScreen> {
+              User? user = FirebaseAuth.instance.currentUser;
+              bool _showFavorites = false;
+              bool _showRSVPs = false;
+              String _filterLocation = '';
+              DateTime? _filterDate;
+            
+              void _toggleFavorites() {
+                setState(() {
+                  _showFavorites = !_showFavorites;
+                });
+              }
+            
+              void _toggleRSVPs() {
+                setState(() {
+                  _showRSVPs = !_showRSVPs;
+                });
+              }
+            
+              void _setFilterLocation(String location) {
+                setState(() {
+                  _filterLocation = location;
+                });
+              }
+            
+              void _setFilterDate(DateTime date) {
+                setState(() {
+                  _filterDate = date;
+                });
+              }
+            
+              Future<void> _toggleFavorite(Event event) async {
+                if (user?.email != null) {
+                  final favorites = event.favorites;
+                  if (favorites.contains(user!.email!)) {
+                    favorites.remove(user!.email!);
+                  } else {
+                    favorites.add(user!.email!);
+                  }
+            
+                  await FirebaseFirestore.instance.collection('events').doc(event.id).update({
+                    'favorites': favorites,
+                  });
+            
+                  setState(() {});
+                }
+              }
+            
+              Future<void> _toggleRSVP(Event event) async {
+                if (user?.email != null) {
+                  final rsvps = event.rsvps;
+                  if (rsvps.contains(user!.email!)) {
+                    rsvps.remove(user!.email!);
+                  } else {
+                    rsvps.add(user!.email!);
+                  }
+            
+                  await FirebaseFirestore.instance.collection('events').doc(event.id).update({
+                    'rsvps': rsvps,
+                  });
+            
+                  setState(() {});
+                }
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Events', style: Theme.of(context).textTheme.titleLarge),
+                    actions: [
+                      IconButton(
+                        icon: Icon(_showFavorites ? Icons.star : Icons.star_border),
+                        onPressed: _toggleFavorites,
+                      ),
+                      IconButton(
+                        icon: Icon(_showRSVPs ? Icons.check_box : Icons.check_box_outline_blank),
+                        onPressed: _toggleRSVPs,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.filter_list),
+                        onPressed: () async {
+                          // Show filter dialog
+                          String? location = await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              TextEditingController locationController = TextEditingController();
+                              return AlertDialog(
+                                title: Text('Filter by Location', style: Theme.of(context).textTheme.titleMedium),
+                                content: TextField(
+                                  controller: locationController,
+                                  decoration: InputDecoration(labelText: 'Location'),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Filter'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(locationController.text);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+            
+                          if (location != null) {
+                            _setFilterLocation(location);
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.date_range),
+                        onPressed: () async {
+                          // Show date picker
+                          DateTime? date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+            
+                          if (date != null) {
+                            _setFilterDate(date);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  body: StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection('events').snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      var events = snapshot.data!.docs.map((doc) => Event.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
+            
+                      // Apply filters
+                      if (_showFavorites) {
+                        events = events.where((event) => event.favorites.contains(user?.email)).toList();
+                      }
+                      if (_showRSVPs) {
+                        events = events.where((event) => event.rsvps.contains(user?.email)).toList();
+                      }
+                      if (_filterLocation.isNotEmpty) {
+                        events = events.where((event) => event.location.contains(_filterLocation)).toList();
+                      }
+                      if (_filterDate != null) {
+                        events = events.where((event) => event.startTime.isSameDate(_filterDate!)).toList();
+                      }
+            
+                      // Sort events by RSVP'd status and start time
+                      events.sort((a, b) {
+                        int rsvpComparison = (b.rsvps.contains(user?.email) ? 1 : 0) - (a.rsvps.contains(user?.email) ? 1 : 0);
+                        if (rsvpComparison != 0) return rsvpComparison;
+                        return a.startTime.compareTo(b.startTime);
+                      });
+            
+                      // Display events
+                      return ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          return ListTile(
+                            title: Text(event.title),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(event.description),
+                                if (event.rsvps.contains(user?.email))
+                                  Text(
+                                    'RSVP\'d',
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    event.rsvps.contains(user?.email) ? Icons.check_circle : Icons.check_circle_outline,
+                                    color: event.rsvps.contains(user?.email) ? Colors.green : null,
+                                  ),
+                                  onPressed: () => _toggleRSVP(event),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    event.favorites.contains(user?.email) ? Icons.star : Icons.star_border,
+                                    color: event.favorites.contains(user?.email) ? Colors.yellow : null,
+                                  ),
+                                  onPressed: () => _toggleFavorite(event),
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              // Navigate to event details
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventDetailsScreen(eventId: event.id)));
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              }
+            }
+            
+            extension DateTimeExtension on DateTime {
+              bool isSameDate(DateTime other) {
+                return year == other.year && month == other.month && day == other.day;
+              }
+            }
+            
+            ```
+            
+        - feed_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class FeedScreen extends StatelessWidget {
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Feed'),
+                  ),
+                  body: Center(
+                    child: Text('This is the feed screen.'),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - friend_requests_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            import 'package:geolocator/geolocator.dart';
+            
+            class FriendRequestsScreen extends StatefulWidget {
+              @override
+              _FriendRequestsScreenState createState() => _FriendRequestsScreenState();
+            }
+            
+            class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
+              final User? user = FirebaseAuth.instance.currentUser;
+              final TextEditingController _searchController = TextEditingController();
+              List<DocumentSnapshot> _suggestedUsers = [];
+              List<DocumentSnapshot> _searchResults = [];
+            
+              @override
+              void initState() {
+                super.initState();
+                _loadSuggestedUsers();
+              }
+            
+              Future<void> _loadSuggestedUsers() async {
+                var userLocation = await _getUserLocation();
+                var snapshot = await FirebaseFirestore.instance.collection('users')
+                  .where('location', isGreaterThanOrEqualTo: userLocation)
+                  .where('location', isLessThanOrEqualTo: userLocation + 100)
+                  .get();
+                setState(() {
+                  _suggestedUsers = snapshot.docs;
+                });
+              }
+            
+              Future<int> _getUserLocation() async {
+                // Mock function to get user location
+                return 0; // Replace with actual location fetching logic
+              }
+            
+              Future<void> _acceptFriendRequest(String friendId) async {
+                try {
+                  await FirebaseFirestore.instance.runTransaction((transaction) async {
+                    var friendData = await FirebaseFirestore.instance.collection('users').doc(friendId).get();
+                    var friendName = friendData['name'];
+                    
+                    transaction.set(
+                      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friends').doc(friendId),
+                      {'name': friendName},
+                    );
+            
+                    transaction.set(
+                      FirebaseFirestore.instance.collection('users').doc(friendId).collection('friends').doc(user!.uid),
+                      {'name': user!.displayName},
+                    );
+            
+                    transaction.delete(
+                      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friendRequests').doc(friendId),
+                    );
+                  });
+                } catch (e) {
+                  print(e);
+                }
+              }
+            
+              Future<void> _denyFriendRequest(String friendId) async {
+                try {
+                  await FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friendRequests').doc(friendId).delete();
+                } catch (e) {
+                  print(e);
+                }
+              }
+            
+              Future<void> _searchUsers(String query) async {
+                var snapshot = await FirebaseFirestore.instance.collection('users')
+                  .where('name', isGreaterThanOrEqualTo: query)
+                  .where('name', isLessThanOrEqualTo: query + '\uf8ff')
+                  .get();
+                setState(() {
+                  _searchResults = snapshot.docs;
+                });
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Friend Requests'),
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(labelText: 'Search Users'),
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              _searchUsers(value);
+                            } else {
+                              setState(() {
+                                _searchResults = [];
+                              });
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Expanded(
+                          child: StreamBuilder(
+                            stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friendRequests').snapshots(),
+                            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) return CircularProgressIndicator();
+                              var requests = snapshot.data!.docs;
+                              if (requests.isEmpty) {
+                                return Center(child: Text("No friend requests at this time."));
+                              }
+                              return ListView.builder(
+                                itemCount: requests.length,
+                                itemBuilder: (context, index) {
+                                  var request = requests[index];
+                                  var requestData = request.data() as Map<String, dynamic>;
+                                  return Card(
+                                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                                    color: Colors.grey[800],
+                                    child: ListTile(
+                                      title: Text(requestData['name'], style: TextStyle(color: Colors.white)),
+                                      subtitle: Text(request.id),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.check, color: Colors.green),
+                                            onPressed: () {
+                                              _acceptFriendRequest(request.id);
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.clear, color: Colors.red),
+                                            onPressed: () {
+                                              _denyFriendRequest(request.id);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text('Suggested Users'),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _searchResults.isNotEmpty ? _searchResults.length : _suggestedUsers.length,
+                            itemBuilder: (context, index) {
+                              var user = _searchResults.isNotEmpty ? _searchResults[index] : _suggestedUsers[index];
+                              return ListTile(
+                                title: Text(user['name']),
+                                trailing: ElevatedButton(
+                                  onPressed: () {
+                                    _sendFriendRequest(user.id);
+                                  },
+                                  child: Text('Send Request'),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            
+              Future<void> _sendFriendRequest(String userId) async {
+                try {
+                  await FirebaseFirestore.instance.collection('users').doc(userId).collection('friendRequests').doc(user!.uid).set({
+                    'name': user!.displayName,
+                  });
+                } catch (e) {
+                  print(e);
+                }
+              }
+            }
+            
+            ```
+            
+        - home_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:intl/intl.dart';
+            import 'event_form_screen.dart';
+            import 'event_details_screen.dart';
+            import 'messaging_screen.dart';
+            import 'feed_screen.dart';
+            import '../components/hover_button.dart';
+            import 'friend_requests_screen.dart';
+            
+            class HomeScreen extends StatelessWidget {
+              @override
+              Widget build(BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user == null) {
+                  return Scaffold(
+                    body: Center(
+                      child: Text("You need to sign in first."),
+                    ),
+                  );
+                }
+            
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Sports App Home Page', style: Theme.of(context).textTheme.titleLarge),
+                    actions: [
+                      IconButton(
+                        icon: Icon(Icons.logout),
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.pushReplacementNamed(context, '/');
+                        },
+                      ),
+                    ],
+                  ),
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          _buildDashboard(context),
+                          SizedBox(height: 20),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        child: HoverButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventFormScreen()));
+                                          },
+                                          child: Text('Create Event'),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Expanded(
+                                        child: _buildEventsList(context),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        child: HoverButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FriendRequestsScreen()));
+                                          },
+                                          child: Text('Find Friends'),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Expanded(
+                                        child: _buildFriendsList(context),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+            
+              Widget _buildDashboard(BuildContext context) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Dashboard', style: Theme.of(context).textTheme.titleLarge),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildDashboardButton(context, 'Feed', Icons.rss_feed, FeedScreen()),
+                        _buildDashboardButton(context, 'Messaging', Icons.message, MessagingScreen()),
+                      ],
+                    ),
+                  ],
+                );
+              }
+            
+              Widget _buildDashboardButton(BuildContext context, String label, IconData icon, Widget screen) {
+                return ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => screen));
+                  },
+                  icon: Icon(icon),
+                  label: Text(label),
+                );
+              }
+            
+              Widget _buildEventsList(BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(8.0),
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection('events').orderBy('startTime').snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      var events = snapshot.data!.docs.where((event) {
+                        var eventData = event.data() as Map<String, dynamic>;
+                        if (eventData['createdBy'] == user!.email) {
+                          return true; // Always show events created by the current user
+                        }
+                        if (eventData['isPrivate'] == true) {
+                          return eventData['invitedFriends'].contains(user.email);
+                        }
+                        return true;
+                      }).toList();
+                      if (events.isEmpty) {
+                        return Center(child: Text("NO EVENT INFORMATION TO DISPLAY AT THIS TIME", style: TextStyle(color: Colors.white)));
+                      }
+                      return ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          var event = events[index];
+                          var eventData = event.data() as Map<String, dynamic>;
+            
+                          bool isActive = eventData['startTime'] != null && eventData['endTime'] != null
+                              ? _isEventActive(eventData['startTime'], eventData['endTime'])
+                              : false;
+                          bool isToday = eventData['startTime'] != null ? _isEventToday(eventData['startTime']) : false;
+                          bool isFavorite = eventData['favorites']?.contains(user!.email) ?? false;
+            
+                          return Card(
+                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            color: Colors.grey[800],
+                            child: ListTile(
+                              leading: Icon(Icons.circle, color: isActive ? Colors.green : (isToday ? Colors.yellow : Colors.grey)),
+                              title: Text(eventData['name'] ?? 'Unnamed Event', style: TextStyle(color: Colors.white)),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Created by: ${eventData['createdBy'] ?? 'Unknown'}\n'
+                                    '${eventData['description'] ?? ''}\n'
+                                    'Location: ${eventData['location'] ?? ''}\n'
+                                    'Date: ${_formatDate(eventData['startTime'])}\n'
+                                    'Start: ${_formatTime(eventData['startTime'])}\n'
+                                    'End: ${_formatTime(eventData['endTime'])}',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                  if ((eventData['rsvps'] ?? []).contains(user!.email))
+                                    Text(
+                                      'RSVP\'d',
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                ],
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(
+                                  isFavorite ? Icons.star : Icons.star_border,
+                                  color: isFavorite ? Colors.yellow : null,
+                                ),
+                                onPressed: () {
+                                  _toggleFavorite(event.id, user.email!, isFavorite);
+                                },
+                              ),
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventDetailsScreen(eventId: event.id)));
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              }
+            
+              void _toggleFavorite(String eventId, String userEmail, bool isFavorite) async {
+                DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+            
+                await FirebaseFirestore.instance.runTransaction((transaction) async {
+                  DocumentSnapshot eventSnapshot = await transaction.get(eventRef);
+            
+                  if (!eventSnapshot.exists) {
+                    throw Exception("Event does not exist!");
+                  }
+            
+                  List<String> favorites = List<String>.from(eventSnapshot['favorites'] ?? []);
+            
+                  if (isFavorite) {
+                    favorites.remove(userEmail);
+                  } else {
+                    favorites.add(userEmail);
+                  }
+            
+                  transaction.update(eventRef, {
+                    'favorites': favorites,
+                  });
+                });
+              }
+            
+              bool _isEventActive(Timestamp startTime, Timestamp endTime) {
+                DateTime now = DateTime.now();
+                return now.isAfter(startTime.toDate()) && now.isBefore(endTime.toDate());
+              }
+            
+              bool _isEventToday(Timestamp startTime) {
+                DateTime now = DateTime.now();
+                DateTime eventDate = startTime.toDate();
+                return now.year == eventDate.year && now.month == eventDate.month && now.day == eventDate.day;
+              }
+            
+              String _formatDate(Timestamp? timestamp) {
+                if (timestamp == null) return 'N/A';
+                DateTime dateTime = timestamp.toDate();
+                return DateFormat('EEEE, M/d/yyyy').format(dateTime);
+              }
+            
+              String _formatTime(Timestamp? timestamp) {
+                if (timestamp == null) return 'N/A';
+                DateTime dateTime = timestamp.toDate();
+                return DateFormat('h:mm a').format(dateTime);
+              }
+            
+              Widget _buildFriendsList(BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friends').snapshots(),
+                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData) return CircularProgressIndicator();
+                            var friends = snapshot.data!.docs;
+                            return ListView.builder(
+                              itemCount: friends.length,
+                              itemBuilder: (context, index) {
+                                var friend = friends[index];
+                                return Card(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  color: Colors.grey[800],
+                                  child: ListTile(
+                                    title: Text(friend['name'], style: TextStyle(color: Colors.white)),
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessagingScreen(friendId: friend.id)));
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friendRequests').snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) return SizedBox.shrink();
+                          var requests = snapshot.data!.docs;
+                          if (requests.isEmpty) return SizedBox.shrink();
+                          return ListTile(
+                            title: Text(
+                              'Friend Requests',
+                              style: TextStyle(color: Colors.yellow),
+                            ),
+                            trailing: Icon(Icons.notifications, color: Colors.yellow),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => FriendRequestsScreen()));
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - invite_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            
+            class InviteScreen extends StatelessWidget {
+              final String eventId;
+              final TextEditingController _emailController = TextEditingController();
+              final TextEditingController _searchController = TextEditingController();
+              final User? user = FirebaseAuth.instance.currentUser;
+            
+              InviteScreen({required this.eventId});
+            
+              Future<void> _inviteUser(String email) async {
+                try {
+                  await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get().then((querySnapshot) {
+                    if (querySnapshot.docs.isNotEmpty) {
+                      var friendId = querySnapshot.docs[0].id;
+                      FirebaseFirestore.instance.collection('users').doc(friendId).collection('friendRequests').doc(user!.uid).set({
+                        'name': user!.displayName,
+                      });
+                    } else {
+                      print('User not found');
+                    }
+                  });
+                } catch (e) {
+                  print(e);
+                }
+              }
+            
+              void _sendInvites(BuildContext context) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return InviteDialog(eventId: eventId);
+                  },
+                );
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Invite Users'),
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _emailController,
+                          decoration: InputDecoration(labelText: 'User Email'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _inviteUser(_emailController.text),
+                          child: Text('Invite'),
+                        ),
+                        Expanded(
+                          child: StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance.collection('events').doc(eventId).snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) return CircularProgressIndicator();
+                              var event = snapshot.data!;
+                              var invitedUsers = event['invitedFriends'] ?? [];
+                              return ListView.builder(
+                                itemCount: invitedUsers.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(invitedUsers[index]),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _sendInvites(context),
+                          child: Text('Send Invites'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            class InviteDialog extends StatefulWidget {
+              final String eventId;
+              InviteDialog({required this.eventId});
+            
+              @override
+              _InviteDialogState createState() => _InviteDialogState();
+            }
+            
+            class _InviteDialogState extends State<InviteDialog> {
+              final TextEditingController _searchController = TextEditingController();
+              List<DocumentSnapshot> _friends = [];
+              List<DocumentSnapshot> _suggestedUsers = [];
+              User? user = FirebaseAuth.instance.currentUser;
+            
+              @override
+              void initState() {
+                super.initState();
+                _loadFriends();
+                _loadSuggestedUsers();
+              }
+            
+              Future<void> _loadFriends() async {
+                var snapshot = await FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('friends').get();
+                setState(() {
+                  _friends = snapshot.docs;
+                });
+              }
+            
+              Future<void> _loadSuggestedUsers() async {
+                var userLocation = await _getUserLocation();
+                var snapshot = await FirebaseFirestore.instance.collection('users')
+                  .where('location', isGreaterThanOrEqualTo: userLocation)
+                  .where('location', isLessThanOrEqualTo: userLocation + 100)
+                  .get();
+                setState(() {
+                  _suggestedUsers = snapshot.docs;
+                });
+              }
+            
+              Future<int> _getUserLocation() async {
+                // Mock function to get user location
+                return 0; // Replace with actual location fetching logic
+              }
+            
+              void _inviteUser(String userId) {
+                FirebaseFirestore.instance.collection('events').doc(widget.eventId).update({
+                  'invitedFriends': FieldValue.arrayUnion([userId]),
+                });
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return AlertDialog(
+                  title: Text('Invite Users'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(labelText: 'Search'),
+                          onChanged: (value) {
+                            setState(() {
+                              _friends = _friends.where((friend) {
+                                var name = friend['name'] as String;
+                                return name.toLowerCase().contains(value.toLowerCase());
+                              }).toList();
+                              _suggestedUsers = _suggestedUsers.where((user) {
+                                var name = user['name'] as String;
+                                return name.toLowerCase().contains(value.toLowerCase());
+                              }).toList();
+                            });
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Text('Friends'),
+                        ..._friends.map((friend) {
+                          return ListTile(
+                            title: Text(friend['name']),
+                            trailing: ElevatedButton(
+                              onPressed: () => _inviteUser(friend.id),
+                              child: Text('Invite'),
+                            ),
+                          );
+                        }).toList(),
+                        SizedBox(height: 10),
+                        Text('Suggested Users'),
+                        ..._suggestedUsers.map((user) {
+                          return ListTile(
+                            title: Text(user['name']),
+                            trailing: ElevatedButton(
+                              onPressed: () => _inviteUser(user.id),
+                              child: Text('Invite'),
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                );
+              }
+            }
+            
+            ```
+            
+        - messaging_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            
+            class MessagingScreen extends StatelessWidget {
+              final String? friendId;
+            
+              MessagingScreen({this.friendId});
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Messaging'),
+                  ),
+                  body: Center(
+                    child: Text('This is the messaging screen.'),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+        - team_sign_up_screen.dart
+            
+            ```dart
+            import 'package:flutter/material.dart';
+            import 'package:cloud_firestore/cloud_firestore.dart';
+            import 'package:firebase_auth/firebase_auth.dart';
+            
+            class TeamSignUpScreen extends StatelessWidget {
+              final String eventId;
+              final User? user = FirebaseAuth.instance.currentUser;
+            
+              TeamSignUpScreen({required this.eventId});
+            
+              Future<void> _signUpForTeam() async {
+                try {
+                  DocumentSnapshot eventDoc = await FirebaseFirestore.instance.collection('events').doc(eventId).get();
+                  List<dynamic> teamUsers = eventDoc['teamUsers'] ?? [];
+                  
+                  if (!teamUsers.contains(user!.email)) {
+                    await FirebaseFirestore.instance.collection('events').doc(eventId).update({
+                      'teamUsers': FieldValue.arrayUnion([user!.email]),
+                    });
+                  }
+                } catch (e) {
+                  print(e);
+                }
+              }
+            
+              @override
+              Widget build(BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Team Sign-up'),
+                  ),
+                  body: Center(
+                    child: ElevatedButton(
+                      onPressed: _signUpForTeam,
+                      child: Text('Sign-up for Team'),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            ```
+            
+    - firebase_options.dart
+        
+        ```dart
+        // File generated by FlutterFire CLI.
+        // ignore_for_file: type=lint
+        import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+        import 'package:flutter/foundation.dart'
+            show defaultTargetPlatform, kIsWeb, TargetPlatform;
+        
+        /// Default [FirebaseOptions] for use with your Firebase apps.
+        ///
+        /// Example:
+        /// ```dart
+        /// import 'firebase_options.dart';
+        /// // ...
+        /// await Firebase.initializeApp(
+        ///   options: DefaultFirebaseOptions.currentPlatform,
+        /// );
+        /// ```
+        class DefaultFirebaseOptions {
+          static FirebaseOptions get currentPlatform {
+            if (kIsWeb) {
+              return web;
+            }
+            switch (defaultTargetPlatform) {
+              case TargetPlatform.android:
+                return android;
+              case TargetPlatform.iOS:
+                return ios;
+              case TargetPlatform.macOS:
+                return macos;
+              case TargetPlatform.windows:
+                return windows;
+              case TargetPlatform.linux:
+                throw UnsupportedError(
+                  'DefaultFirebaseOptions have not been configured for linux - '
+                  'you can reconfigure this by running the FlutterFire CLI again.',
+                );
+              default:
+                throw UnsupportedError(
+                  'DefaultFirebaseOptions are not supported for this platform.',
+                );
+            }
+          }
+        
+          static const FirebaseOptions web = FirebaseOptions(
+            apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
+            authDomain: 'sports-app-4e722.firebaseapp.com',
+            databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+            projectId: 'sports-app-4e722',
+            storageBucket: 'sports-app-4e722.appspot.com',
+            messagingSenderId: '789631569922',
+            appId: '1:789631569922:web:6f5dad7e1d9ffee5f2d71b',
+            measurementId: 'G-2DTJS5487J',
+          );
+        
+          static const FirebaseOptions android = FirebaseOptions(
+            apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
+            appId: '1:789631569922:android:8433a05c5f270ac1f2d71b',
+            messagingSenderId: '789631569922',
+            projectId: 'sports-app-4e722',
+            databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+            storageBucket: 'sports-app-4e722.appspot.com',
+          );
+        
+          static const FirebaseOptions ios = FirebaseOptions(
+            apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
+            appId: '1:789631569922:ios:4e1db923e75692e4f2d71b',
+            messagingSenderId: '789631569922',
+            projectId: 'sports-app-4e722',
+            databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+            storageBucket: 'sports-app-4e722.appspot.com',
+            iosBundleId: 'com.example.sportsApp',
+          );
+        
+          static const FirebaseOptions macos = FirebaseOptions(
+            apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
+            appId: '1:789631569922:ios:4e1db923e75692e4f2d71b',
+            messagingSenderId: '789631569922',
+            projectId: 'sports-app-4e722',
+            databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+            storageBucket: 'sports-app-4e722.appspot.com',
+            iosBundleId: 'com.example.sportsApp',
+          );
+        
+          static const FirebaseOptions windows = FirebaseOptions(
+            apiKey: 'AIzaSyC_iz3yB5OM8HkDTqjqY8MGzQppkJ3sQBA',
+            appId: '1:789631569922:web:6f5dad7e1d9ffee5f2d71b',
+            messagingSenderId: '789631569922',
+            projectId: 'sports-app-4e722',
+            authDomain: 'sports-app-4e722.firebaseapp.com',
+            databaseURL: 'https://sports-app-4e722-default-rtdb.firebaseio.com',
+            storageBucket: 'sports-app-4e722.appspot.com',
+            measurementId: 'G-2DTJS5487J',
+          );
+        }
+        
+        ```
+        
+    - main.dart
+        
+        ```dart
+        import 'package:flutter/material.dart';
+        import 'package:firebase_core/firebase_core.dart';
+        import 'firebase_options.dart';
+        import 'screens/auth_screen.dart';
+        import 'screens/home_screen.dart';
+        import 'screens/event_form.dart';
+        import 'screens/events_screen.dart';
+        import 'screens/check_in_screen.dart';
+        import 'screens/event_details_screen.dart';
+        import 'screens/invite_screen.dart';
+        import 'screens/team_sign_up_screen.dart';
+        import 'screens/feed_screen.dart';
+        import 'screens/messaging_screen.dart';
+        
+        void main() async {
+          WidgetsFlutterBinding.ensureInitialized();
+          await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+          runApp(MyApp());
+        }
+        
+        class MyApp extends StatelessWidget {
+          @override
+          Widget build(BuildContext context) {
+            return MaterialApp(
+              title: 'Sports App',
+              theme: ThemeData(
+                primaryColor: Color(0xFF3498db), // Cool Blue
+                colorScheme: ColorScheme.fromSwatch().copyWith(
+                  secondary: Color(0xFF1abc9c), // Cool Cyan
+                ),
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Color(0xFF3498db); // Blue color on hover
+                        }
+                        if (states.contains(MaterialState.pressed)) {
+                          return Color(0xFF1c6691); // Darker color on click
+                        }
+                        return Color(0xFF1abc9c); // Default green button color
+                      },
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Button text color
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(5), // Always have shadow
+                    shadowColor: MaterialStateProperty.all<Color>(
+                      Colors.black.withOpacity(0.2),
+                    ),
+                    overlayColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.white.withOpacity(0.2); // Overlay color on hover
+                        }
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.white.withOpacity(0.3); // Overlay color on click
+                        }
+                        return Colors.transparent; // Default overlay color
+                      },
+                    ),
+                    animationDuration: Duration(milliseconds: 150),
+                    enableFeedback: true,
+                  ),
+                ),
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Color(0xFF3498db)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                scaffoldBackgroundColor: Color(0xFFecf0f1), // Light Background
+                cardTheme: CardTheme(
+                  color: Colors.white,
+                  shadowColor: Colors.black.withOpacity(0.2),
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: Color(0xFF3498db), // Cool Blue
+                  titleTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              initialRoute: '/',
+              routes: {
+                '/': (context) => AuthScreen(),
+                '/home': (context) => HomeScreen(),
+                '/event_form': (context) => EventForm(),
+                '/events': (context) => EventsScreen(),
+                '/check_in': (context) => CheckInScreen(eventId: ''),
+                '/event_details': (context) => EventDetailsScreen(eventId: ''),
+                '/invite': (context) => InviteScreen(eventId: ''),
+                '/team_sign_up': (context) => TeamSignUpScreen(eventId: ''),
+                '/feed': (context) => FeedScreen(),
+                '/messaging': (context) => MessagingScreen(),
+              },
+            );
+          }
+        }
+        
+        ```
+        
+    - analysis_options.yaml
+        
+        ```yaml
+        # This file configures the analyzer, which statically analyzes Dart code to
+        # check for errors, warnings, and lints.
+        #
+        # The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+        # IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+        # invoked from the command line by running `flutter analyze`.
+        
+        # The following line activates a set of recommended lints for Flutter apps,
+        # packages, and plugins designed to encourage good coding practices.
+        include: package:flutter_lints/flutter.yaml
+        
+        linter:
+          # The lint rules applied to this project can be customized in the
+          # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+          # included above or to enable additional rules. A list of all available lints
+          # and their documentation is published at https://dart.dev/lints.
+          #
+          # Instead of disabling a lint rule for the entire project in the
+          # section below, it can also be suppressed for a single line of code
+          # or a specific dart file by using the `// ignore: name_of_lint` and
+          # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+          # producing the lint.
+          rules:
+            # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+            # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+        
+        # Additional information about this file can be found at
+        # https://dart.dev/guides/language/analysis-options
+        
+        ```
+        
+    - database.rules.json
+        
+        ```json
+        {
+          "rules": {
+            ".read": false,
+            ".write": false
+          }
+        }
+        ```
+        
+    - .firebaserc
+        
+        ```json
+        {
+          "projects": {
+            "default": "sports-app-4e722"
+          },
+          "dataconnectEmulatorConfig": {
+            "postgres": {
+              "localConnectionString": "postgresql://localhost:5432?sslmode=disable"
+            }
+          }
+        }
+        
+        ```
+        
+    - firebase.json
+        
+        ```json
+        {
+          "flutter": {
+            "platforms": {
+              "android": {
+                "default": {
+                  "projectId": "sports-app-4e722",
+                  "appId": "1:789631569922:android:8433a05c5f270ac1f2d71b",
+                  "fileOutput": "android/app/google-services.json"
+                }
+              },
+              "dart": {
+                "lib/firebase_options.dart": {
+                  "projectId": "sports-app-4e722",
+                  "configurations": {
+                    "android": "1:789631569922:android:8433a05c5f270ac1f2d71b",
+                    "ios": "1:789631569922:ios:4e1db923e75692e4f2d71b",
+                    "macos": "1:789631569922:ios:4e1db923e75692e4f2d71b",
+                    "web": "1:789631569922:web:6f5dad7e1d9ffee5f2d71b",
+                    "windows": "1:789631569922:web:68b44e1ea882342ef2d71b"
+                  }
+                }
+              }
+            }
+          },
+          "emulators": {
+            "auth": {
+              "port": 9099
+            },
+            "functions": {
+              "port": 5001
+            },
+            "firestore": {
+              "host": "localhost",
+              "port": 8081,
+              "rules": "firestore.rules",
+              "indexes": "firestore.indexes.json"
+            },
+            "database": {
+              "port": 9000,
+              "rules": "database.rules.json"
+            },
+            "hosting": {
+              "port": 5000
+            },
+            "pubsub": {
+              "port": 8085
+            },
+            "storage": {
+              "port": 9199,
+              "rules": "storage.rules"
+            },
+            "ui": {
+              "enabled": true
+            }
+          },
+          "hosting": {
+            "public": "public",
+            "ignore": [
+              "firebase.json",
+              "**/.*",
+              "**/node_modules/**"
+            ],
+            "rewrites": [
+              {
+                "source": "**",
+                "destination": "/index.html"
+              }
+            ]
+          },
+          "functions": [
+            {
+              "source": "functions",
+              "codebase": "default",
+              "ignore": [
+                "node_modules",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log",
+                "*.local"
+              ],
+              "predeploy": [
+                "npm --prefix \"$RESOURCE_DIR\" run lint"
+              ]
+            }
+          ],
+          "database": {
+            "rules": "database.rules.json"
+          },
+          "firestore": {
+            "rules": "firestore.rules",
+            "indexes": "firestore.indexes.json"
+          },
+          "storage": {
+            "rules": "storage.rules"
+          }
+        }
+        
+        ```
+        
+    - firestore.indexes.json
+        
+        ```json
+        {
+          "indexes": [],
+          "fieldOverrides": []
+        }
+        
+        ```
+        
+    - firestore.rules
+        
+        rules_version = '2';
+        
+        service cloud.firestore {
+        match /databases/{database}/documents {
+        match /{document=**} {
+        allow read, write: if request.auth != null;
+        }
+        }
+        }
+        
+    - pubspec.lock
+        
+        # Generated by pub
+        
+        # See https://dart.dev/tools/pub/glossary#lockfile
+        
+        packages:
+        _flutterfire_internals:
+        dependency: transitive
+        description:
+        name: _flutterfire_internals
+        sha256: "37a42d06068e2fe3deddb2da079a8c4d105f241225ba27b7122b37e9865fd8f7"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.3.35"
+        async:
+        dependency: transitive
+        description:
+        name: async
+        sha256: "947bfcf187f74dbc5e146c9eb9c0f10c9f8b30743e341481c1e2ed3ecc18c20c"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.11.0"
+        boolean_selector:
+        dependency: transitive
+        description:
+        name: boolean_selector
+        sha256: "6cfb5af12253eaf2b368f07bacc5a80d1301a071c73360d746b7f2e32d762c66"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.1.1"
+        characters:
+        dependency: transitive
+        description:
+        name: characters
+        sha256: "04a925763edad70e8443c99234dc3328f442e811f1d8fd1a72f1c8ad0f69a605"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.3.0"
+        clock:
+        dependency: transitive
+        description:
+        name: clock
+        sha256: cb6d7f03e1de671e34607e909a7213e31d7752be4fb66a86d29fe1eb14bfb5cf
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.1.1"
+        cloud_firestore:
+        dependency: "direct main"
+        description:
+        name: cloud_firestore
+        sha256: a0f161b92610e078b4962d7e6ebeb66dc9cce0ada3514aeee442f68165d78185
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.17.5"
+        cloud_firestore_platform_interface:
+        dependency: transitive
+        description:
+        name: cloud_firestore_platform_interface
+        sha256: "6a55b319f8d33c307396b9104512e8130a61904528ab7bd8b5402678fca54b81"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "6.2.5"
+        cloud_firestore_web:
+        dependency: transitive
+        description:
+        name: cloud_firestore_web
+        sha256: "89dfa1304d3da48b3039abbb2865e3d30896ef858e569a16804a99f4362283a9"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.12.5"
+        collection:
+        dependency: transitive
+        description:
+        name: collection
+        sha256: ee67cb0715911d28db6bf4af1026078bd6f0128b07a5f66fb2ed94ec6783c09a
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.18.0"
+        crypto:
+        dependency: transitive
+        description:
+        name: crypto
+        sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.3"
+        cupertino_icons:
+        dependency: "direct main"
+        description:
+        name: cupertino_icons
+        sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.0.8"
+        fake_async:
+        dependency: transitive
+        description:
+        name: fake_async
+        sha256: "511392330127add0b769b75a987850d136345d9227c6b94c96a04cf4a391bf78"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.3.1"
+        firebase_auth:
+        dependency: "direct main"
+        description:
+        name: firebase_auth
+        sha256: cfc2d970829202eca09e2896f0a5aa7c87302817ecc0bdfa954f026046bf10ba
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.20.0"
+        firebase_auth_platform_interface:
+        dependency: transitive
+        description:
+        name: firebase_auth_platform_interface
+        sha256: a0270e1db3b2098a14cb2a2342b3cd2e7e458e0c391b1f64f6f78b14296ec093
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "7.3.0"
+        firebase_auth_web:
+        dependency: transitive
+        description:
+        name: firebase_auth_web
+        sha256: "64e067e763c6378b7e774e872f0f59f6812885e43020e25cde08f42e9459837b"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "5.12.0"
+        firebase_core:
+        dependency: "direct main"
+        description:
+        name: firebase_core
+        sha256: "26de145bb9688a90962faec6f838247377b0b0d32cc0abecd9a4e43525fc856c"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.32.0"
+        firebase_core_platform_interface:
+        dependency: transitive
+        description:
+        name: firebase_core_platform_interface
+        sha256: c437ae5d17e6b5cc7981cf6fd458a5db4d12979905f9aafd1fea930428a9fe63
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "5.0.0"
+        firebase_core_web:
+        dependency: transitive
+        description:
+        name: firebase_core_web
+        sha256: "22fcb352744908224fc7be3caae254836099786acfe5df6e9fe901e9c2575a41"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.17.1"
+        fixnum:
+        dependency: transitive
+        description:
+        name: fixnum
+        sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.1.0"
+        flutter:
+        dependency: "direct main"
+        description: flutter
+        source: sdk
+        version: "0.0.0"
+        flutter_calendar_carousel:
+        dependency: "direct main"
+        description:
+        name: flutter_calendar_carousel
+        sha256: da198154b3a7254757ead8d40eee4f2fa53d4500fe8a226cccb951e8763f988b
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.4.1"
+        flutter_keyboard_visibility:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility
+        sha256: "4983655c26ab5b959252ee204c2fffa4afeb4413cd030455194ec0caa3b8e7cb"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "5.4.1"
+        flutter_keyboard_visibility_linux:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility_linux
+        sha256: "6fba7cd9bb033b6ddd8c2beb4c99ad02d728f1e6e6d9b9446667398b2ac39f08"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.0.0"
+        flutter_keyboard_visibility_macos:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility_macos
+        sha256: c5c49b16fff453dfdafdc16f26bdd8fb8d55812a1d50b0ce25fc8d9f2e53d086
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.0.0"
+        flutter_keyboard_visibility_platform_interface:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility_platform_interface
+        sha256: e43a89845873f7be10cb3884345ceb9aebf00a659f479d1c8f4293fcb37022a4
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.0.0"
+        flutter_keyboard_visibility_web:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility_web
+        sha256: d3771a2e752880c79203f8d80658401d0c998e4183edca05a149f5098ce6e3d1
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.0.0"
+        flutter_keyboard_visibility_windows:
+        dependency: transitive
+        description:
+        name: flutter_keyboard_visibility_windows
+        sha256: fc4b0f0b6be9b93ae527f3d527fb56ee2d918cd88bbca438c478af7bcfd0ef73
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.0.0"
+        flutter_lints:
+        dependency: "direct dev"
+        description:
+        name: flutter_lints
+        sha256: "9e8c3858111da373efc5aa341de011d9bd23e2c5c5e0c62bccf32438e192d7b1"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.2"
+        flutter_test:
+        dependency: "direct dev"
+        description: flutter
+        source: sdk
+        version: "0.0.0"
+        flutter_typeahead:
+        dependency: "direct main"
+        description:
+        name: flutter_typeahead
+        sha256: b9942bd5b7611a6ec3f0730c477146cffa4cd4b051077983ba67ddfc9e7ee818
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.8.0"
+        flutter_web_plugins:
+        dependency: transitive
+        description: flutter
+        source: sdk
+        version: "0.0.0"
+        geolocator:
+        dependency: "direct main"
+        description:
+        name: geolocator
+        sha256: f4efb8d3c4cdcad2e226af9661eb1a0dd38c71a9494b22526f9da80ab79520e5
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "10.1.1"
+        geolocator_android:
+        dependency: transitive
+        description:
+        name: geolocator_android
+        sha256: "00c7177a95823dd3ee35ef42fd8666cd27d219ae14cea472ac76a21dff43000b"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.6.0"
+        geolocator_apple:
+        dependency: transitive
+        description:
+        name: geolocator_apple
+        sha256: bc2aca02423ad429cb0556121f56e60360a2b7d694c8570301d06ea0c00732fd
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.3.7"
+        geolocator_platform_interface:
+        dependency: transitive
+        description:
+        name: geolocator_platform_interface
+        sha256: c6005787efe9e27cb0f6b50230c217e6f0ef8e1e7a8b854efb4f46489e502603
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.2.3"
+        geolocator_web:
+        dependency: transitive
+        description:
+        name: geolocator_web
+        sha256: "102e7da05b48ca6bf0a5bda0010f886b171d1a08059f01bfe02addd0175ebece"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.2.1"
+        geolocator_windows:
+        dependency: transitive
+        description:
+        name: geolocator_windows
+        sha256: "53da08937d07c24b0d9952eb57a3b474e29aae2abf9dd717f7e1230995f13f0e"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.2.3"
+        http:
+        dependency: "direct main"
+        description:
+        name: http
+        sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.13.6"
+        http_parser:
+        dependency: transitive
+        description:
+        name: http_parser
+        sha256: "2aa08ce0341cc9b354a498388e30986515406668dbcc4f7c950c3e715496693b"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.0.2"
+        intl:
+        dependency: "direct main"
+        description:
+        name: intl
+        sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.17.0"
+        leak_tracker:
+        dependency: transitive
+        description:
+        name: leak_tracker
+        sha256: "7f0df31977cb2c0b88585095d168e689669a2cc9b97c309665e3386f3e9d341a"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "10.0.4"
+        leak_tracker_flutter_testing:
+        dependency: transitive
+        description:
+        name: leak_tracker_flutter_testing
+        sha256: "06e98f569d004c1315b991ded39924b21af84cf14cc94791b8aea337d25b57f8"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.3"
+        leak_tracker_testing:
+        dependency: transitive
+        description:
+        name: leak_tracker_testing
+        sha256: "6ba465d5d76e67ddf503e1161d1f4a6bc42306f9d66ca1e8f079a47290fb06d3"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.1"
+        lints:
+        dependency: transitive
+        description:
+        name: lints
+        sha256: cbf8d4b858bb0134ef3ef87841abdf8d63bfc255c266b7bf6b39daa1085c4290
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.0"
+        matcher:
+        dependency: transitive
+        description:
+        name: matcher
+        sha256: d2323aa2060500f906aa31a895b4030b6da3ebdcc5619d14ce1aada65cd161cb
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.12.16+1"
+        material_color_utilities:
+        dependency: transitive
+        description:
+        name: material_color_utilities
+        sha256: "0e0a020085b65b6083975e499759762399b4475f766c21668c4ecca34ea74e5a"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.8.0"
+        meta:
+        dependency: transitive
+        description:
+        name: meta
+        sha256: "7687075e408b093f36e6bbf6c91878cc0d4cd10f409506f7bc996f68220b9136"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.12.0"
+        path:
+        dependency: transitive
+        description:
+        name: path
+        sha256: "087ce49c3f0dc39180befefc60fdb4acd8f8620e5682fe2476afd0b3688bb4af"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.9.0"
+        plugin_platform_interface:
+        dependency: transitive
+        description:
+        name: plugin_platform_interface
+        sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.1.8"
+        pointer_interceptor:
+        dependency: transitive
+        description:
+        name: pointer_interceptor
+        sha256: adf7a637f97c077041d36801b43be08559fd4322d2127b3f20bb7be1b9eebc22
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.9.3+7"
+        simple_gesture_detector:
+        dependency: transitive
+        description:
+        name: simple_gesture_detector
+        sha256: ba2cd5af24ff20a0b8d609cec3f40e5b0744d2a71804a2616ae086b9c19d19a3
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.2.1"
+        sky_engine:
+        dependency: transitive
+        description: flutter
+        source: sdk
+        version: "0.0.99"
+        source_span:
+        dependency: transitive
+        description:
+        name: source_span
+        sha256: "53e943d4206a5e30df338fd4c6e7a077e02254531b138a15aec3bd143c1a8b3c"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.10.0"
+        sprintf:
+        dependency: transitive
+        description:
+        name: sprintf
+        sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "7.0.0"
+        stack_trace:
+        dependency: transitive
+        description:
+        name: stack_trace
+        sha256: "73713990125a6d93122541237550ee3352a2d84baad52d375a4cad2eb9b7ce0b"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.11.1"
+        stream_channel:
+        dependency: transitive
+        description:
+        name: stream_channel
+        sha256: ba2aa5d8cc609d96bbb2899c28934f9e1af5cddbd60a827822ea467161eb54e7
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.1.2"
+        string_scanner:
+        dependency: transitive
+        description:
+        name: string_scanner
+        sha256: "556692adab6cfa87322a115640c11f13cb77b3f076ddcc5d6ae3c20242bedcde"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.2.0"
+        table_calendar:
+        dependency: "direct main"
+        description:
+        name: table_calendar
+        sha256: "7f1270313c0cdb245b583ed8518982c01d4a7e95869b3c30abcbae3b642c45d0"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "3.0.8"
+        term_glyph:
+        dependency: transitive
+        description:
+        name: term_glyph
+        sha256: a29248a84fbb7c79282b40b8c72a1209db169a2e0542bce341da992fe1bc7e84
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.2.1"
+        test_api:
+        dependency: transitive
+        description:
+        name: test_api
+        sha256: "9955ae474176f7ac8ee4e989dadfb411a58c30415bcfb648fa04b2b8a03afa7f"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.7.0"
+        typed_data:
+        dependency: transitive
+        description:
+        name: typed_data
+        sha256: facc8d6582f16042dd49f2463ff1bd6e2c9ef9f3d5da3d9b087e244a7b564b3c
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "1.3.2"
+        uuid:
+        dependency: transitive
+        description:
+        name: uuid
+        sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "4.4.0"
+        vector_math:
+        dependency: transitive
+        description:
+        name: vector_math
+        sha256: "80b3257d1492ce4d091729e3a67a60407d227c27241d6927be0130c98e741803"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "2.1.4"
+        vm_service:
+        dependency: transitive
+        description:
+        name: vm_service
+        sha256: "3923c89304b715fb1eb6423f017651664a03bf5f4b29983627c4da791f74a4ec"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "14.2.1"
+        web:
+        dependency: transitive
+        description:
+        name: web
+        sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+        url: "[https://pub.dev](https://pub.dev/)"
+        source: hosted
+        version: "0.5.1"
+        sdks:
+        dart: ">=3.3.0 <4.0.0"
+        flutter: ">=3.18.0-18.0.pre.54"
+        
+    - pubspec.yaml
+        
+        ```yaml
+        name: sports_app
+        description: "A new Flutter project."
+        publish_to: 'none'
+        
+        version: 1.0.0+1
+        
+        environment:
+          sdk: '>=2.17.0 <3.0.0'
+        
+        dependencies:
+          flutter:
+            sdk: flutter
+          firebase_core: ^2.10.0
+          firebase_auth: ^4.7.0
+          cloud_firestore: ^4.10.0
+          cupertino_icons: ^1.0.6
+          intl: ^0.17.0
+          geolocator: ^10.1.1  # Updated with the latest version
+          table_calendar: ^3.0.4
+          flutter_calendar_carousel: ^2.3.1
+          flutter_typeahead: ^4.0.0
+          http: ^0.13.3
+        
+        dev_dependencies:
+          flutter_test:
+            sdk: flutter
+          flutter_lints: ^3.0.0
+        
+        flutter:
+          uses-material-design: true
+        
+        ```
+        
+    - storage.rules
+        
+        rules_version = '2';
+        
+        // Craft rules based on data in your Firestore database
+        // allow write: if firestore.get(
+        //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+        service firebase.storage {
+        match /b/{bucket}/o {
+        match /{allPaths=**} {
+        allow read, write: if false;
+        }
+        }
+        }
+        
+    - README.md
+        
+        ```markdown
+        # sports_app
+        
+        A new Flutter project.
+        
+        ## Getting Started
+        
+        This project is a starting point for a Flutter application.
+        
+        A few resources to get you started if this is your first Flutter project:
+        
+        - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+        - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+        
+        For help getting started with Flutter development, view the
+        [online documentation](https://docs.flutter.dev/), which offers tutorials,
+        samples, guidance on mobile development, and a full API reference.
+        
+        ```
