@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'event_form_screen.dart';
+import 'package:geolocator/geolocator.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   final String eventId;
@@ -64,6 +65,40 @@ class EventDetailsScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _checkIn(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    // Get user's current location
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+    DocumentSnapshot eventSnapshot = await eventRef.get();
+
+    if (!eventSnapshot.exists) {
+      throw Exception("Event does not exist!");
+    }
+
+    var eventData = eventSnapshot.data() as Map<String, dynamic>;
+    GeoPoint eventLocation = eventData['location'];
+    double distance = Geolocator.distanceBetween(
+      position.latitude,
+      position.longitude,
+      eventLocation.latitude,
+      eventLocation.longitude,
+    );
+
+    if (distance <= 804.672) { // half a mile in meters
+      await FirebaseFirestore.instance.collection('events').doc(eventId).update({
+        'checkedInUsers': FieldValue.arrayUnion([user.email]),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Checked In Successfully')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('You must be within half a mile of the event to check in')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -96,6 +131,7 @@ class EventDetailsScreen extends StatelessWidget {
           var eventData = snapshot.data!.data() as Map<String, dynamic>;
           bool isFavorite = eventData['favorites']?.contains(user?.email) ?? false;
           bool isRSVPed = eventData['rsvps']?.contains(user?.email) ?? false;
+          bool isCheckedIn = eventData['checkedInUsers']?.contains(user?.email) ?? false;
           String createdBy = eventData['createdBy'] ?? 'Unknown';
 
           return Padding(
@@ -135,11 +171,30 @@ class EventDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 Center(
-                  child: IconButton(
-                    icon: Icon(isFavorite ? Icons.star : Icons.star_border, color: isFavorite ? Colors.yellow : null),
-                    onPressed: () => _toggleFavorite(context),
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: isCheckedIn ? null : () => _checkIn(context),
+                        child: Text('Check In'),
+                      ),
+                      SizedBox(height: 16),
+                      IconButton(
+                        icon: Icon(isFavorite ? Icons.star : Icons.star_border, color: isFavorite ? Colors.yellow : null),
+                        onPressed: () => _toggleFavorite(context),
+                      ),
+                    ],
                   ),
                 ),
+                SizedBox(height: 16),
+                if (isCheckedIn)
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Navigate to the team sign-up screen
+                      },
+                      child: Text('Sign Up for a Team'),
+                    ),
+                  ),
               ],
             ),
           );

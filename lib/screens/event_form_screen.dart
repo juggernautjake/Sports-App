@@ -9,10 +9,11 @@ import '../components/event_description_field.dart';
 import '../components/event_location_fields.dart';
 import '../components/event_name_field.dart';
 import '../components/event_repetition_type_dropdown.dart';
-import '../components/event_time_picker.dart';
+import '../components/event_time_picker.dart' as time_picker;
 import '../components/invite_friends_list.dart';
 import '../components/private_event_toggle.dart';
 import '../components/validation_error_dialog.dart';
+import '../components/event_team_size_picker.dart' as team_size_picker;
 
 class EventFormScreen extends StatefulWidget {
   final bool isEdit;
@@ -40,7 +41,10 @@ class _EventFormScreenState extends State<EventFormScreen> {
   int _endHour = 12;
   int _endMinute = 0;
   String _endPeriod = 'AM';
+  DateTime _checkInTime = DateTime.now();
+  int _teamSize = 4;
   bool _isPrivate = false;
+  bool _setTeamSize = false; // New toggle for setting team size
   List<String> _invitedFriends = [];
   String _repetitionType = 'none';
 
@@ -80,6 +84,8 @@ class _EventFormScreenState extends State<EventFormScreen> {
     _endHour = endDateTime.hour > 12 ? endDateTime.hour - 12 : endDateTime.hour;
     _endMinute = endDateTime.minute;
     _endPeriod = endDateTime.hour >= 12 ? 'PM' : 'AM';
+    _checkInTime = (data['checkInTime'] as Timestamp).toDate();
+    _teamSize = data['teamSize'] ?? 4;
     _isPrivate = data['isPrivate'] ?? false;
     _invitedFriends = List<String>.from(data['invitedFriends'] ?? []);
     _repetitionType = data['repetitionType'] ?? 'none';
@@ -144,11 +150,15 @@ class _EventFormScreenState extends State<EventFormScreen> {
                 'location': address,
                 'startTime': Timestamp.fromDate(startDateTime),
                 'endTime': Timestamp.fromDate(endDateTime),
+                'checkInTime': Timestamp.fromDate(_checkInTime),
                 'createdBy': FirebaseAuth.instance.currentUser!.email,
                 'isPrivate': _isPrivate,
                 'invitedFriends': _invitedFriends,
                 'favorites': [],
                 'rsvps': [],
+                'checkedInUsers': [],
+                'teamSize': _setTeamSize ? _teamSize : null,
+                'teams': _setTeamSize ? List.generate(_teamSize, (index) => <String>[]) : null,
                 'repetitionType': _repetitionType,
                 'nextOccurrence': _calculateNextOccurrence(startDateTime),
               };
@@ -238,7 +248,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
                   submitted: _submitted,
                 ),
                 EventDatePicker(eventDate: _eventDate, onDateChanged: (date) => setState(() => _eventDate = date)),
-                EventTimePicker(
+                time_picker.EventTimePicker(
                   label: 'Start Time',
                   hour: _startHour,
                   minute: _startMinute,
@@ -247,7 +257,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
                   onMinuteChanged: (minute) => setState(() => _startMinute = minute),
                   onPeriodChanged: (period) => setState(() => _startPeriod = period),
                 ),
-                EventTimePicker(
+                time_picker.EventTimePicker(
                   label: 'End Time',
                   hour: _endHour,
                   minute: _endMinute,
@@ -256,6 +266,70 @@ class _EventFormScreenState extends State<EventFormScreen> {
                   onMinuteChanged: (minute) => setState(() => _endMinute = minute),
                   onPeriodChanged: (period) => setState(() => _endPeriod = period),
                 ),
+                time_picker.EventTimePicker(
+                  label: 'Check-In Time',
+                  hour: _checkInTime.hour,
+                  minute: _checkInTime.minute,
+                  period: _checkInTime.hour >= 12 ? 'PM' : 'AM',
+                  onHourChanged: (hour) {
+                    setState(() {
+                      _checkInTime = DateTime(
+                        _checkInTime.year,
+                        _checkInTime.month,
+                        _checkInTime.day,
+                        _checkInTime.hour >= 12 && hour != 12 ? hour + 12 : hour,
+                        _checkInTime.minute,
+                      );
+                    });
+                  },
+                  onMinuteChanged: (minute) {
+                    setState(() {
+                      _checkInTime = DateTime(
+                        _checkInTime.year,
+                        _checkInTime.month,
+                        _checkInTime.day,
+                        _checkInTime.hour,
+                        minute,
+                      );
+                    });
+                  },
+                  onPeriodChanged: (period) {
+                    setState(() {
+                      int hour = _checkInTime.hour;
+                      if (period == 'AM' && hour >= 12) {
+                        hour -= 12;
+                      } else if (period == 'PM' && hour < 12) {
+                        hour += 12;
+                      }
+                      _checkInTime = DateTime(
+                        _checkInTime.year,
+                        _checkInTime.month,
+                        _checkInTime.day,
+                        hour,
+                        _checkInTime.minute,
+                      );
+                    });
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Set Team Size', style: Theme.of(context).textTheme.titleMedium),
+                    Switch(
+                      value: _setTeamSize,
+                      onChanged: (value) => setState(() => _setTeamSize = value),
+                      activeColor: Colors.blue,
+                      inactiveThumbColor: Colors.grey,
+                      inactiveTrackColor: Colors.grey.withOpacity(0.5),
+                    ),
+                  ],
+                ),
+                if (_setTeamSize)
+                  team_size_picker.EventTeamSizePicker(
+                    label: 'Team Size',
+                    teamSize: _teamSize,
+                    onTeamSizeChanged: (size) => setState(() => _teamSize = size),
+                  ),
                 EventRepetitionTypeDropdown(
                   repetitionType: _repetitionType,
                   onRepetitionTypeChanged: (type) => setState(() => _repetitionType = type!),
